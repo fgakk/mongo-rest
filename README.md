@@ -1,3 +1,4 @@
+![alt tag](https://travis-ci.org/fgakk/mongo-rest.svg?branch=master)
 mongo-rest
 ==========
 
