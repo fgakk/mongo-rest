@@ -6,10 +6,10 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.fga.api.mongo.APIConstants;
 import com.fga.api.mongo.exception.APIException;
+import com.fga.api.mongo.util.JSONUtil;
+import com.fga.api.mongo.util.MapReduceUtil;
 import com.fga.api.mongo.util.MongoClientFactory;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -48,6 +48,8 @@ public class MongoDAOImpl implements MongoDAO{
 		return status;
 		
 	}
+	
+	
 
 	@Override
 	public boolean delete() {
@@ -63,10 +65,65 @@ public class MongoDAOImpl implements MongoDAO{
 
 
 	@Override
-	public String get() {
+	public String get(String collectionName, String query) {
 		
-		throw new UnsupportedOperationException();
+		JSONArray result = new JSONArray();
+		DBCollection collection = database.getCollection(collectionName);
+		DBCursor cursor;
+		if (query != null){
+			DBObject queryObj = (DBObject) JSONUtil.parse(query);
+			cursor = collection.find(queryObj);
+		}else{
+			cursor = collection.find();
+		}
 		
+		
+		try{
+			while (cursor.hasNext()){
+				DBObject db = cursor.next();
+				result.put(new JSONObject(db.toString()));
+			}
+		
+		} catch (JSONException e) {
+			logger.severe("Error in the data");
+		}finally{
+			cursor.close();
+		}
+		
+		return result.toString();
+	}
+	
+	@Override
+	public String get(String collectionName, String query, String sort, int limit) {
+		
+		JSONArray result = new JSONArray();
+		DBCollection collection = database.getCollection(collectionName);
+		DBCursor cursor;
+		if (query != null && sort != null){
+			DBObject queryObj = (DBObject) JSONUtil.parse(query);
+			DBObject sortObj = (DBObject) JSONUtil.parse(sort);
+			cursor = collection.find(queryObj).sort(sortObj).limit(limit);
+		}else if(sort != null){
+			DBObject sortObj = (DBObject) JSONUtil.parse(sort);
+			cursor = collection.find().sort(sortObj).limit(limit);
+		}else{
+			cursor = collection.find().limit(limit);
+		}
+		
+		
+		try{
+			while (cursor.hasNext()){
+				DBObject db = cursor.next();
+				result.put(new JSONObject(db.toString()));
+			}
+		
+		} catch (JSONException e) {
+			logger.severe("Error in the data");
+		}finally{
+			cursor.close();
+		}
+		
+		return result.toString();
 	}
 
 	@Override
@@ -110,6 +167,31 @@ public class MongoDAOImpl implements MongoDAO{
 		
 		
 		return result.toString();
+	}
+
+	@Override
+	public boolean mapReduce(String collectionName, String map, String reduce, String outputCollection, String query, String type) throws APIException {
+		
+		boolean result = false;
+		DBCollection inputCollection = database.getCollection(collectionName);
+		
+		try{
+			MapReduceUtil.executeMapReduce(inputCollection, map, reduce, outputCollection, query, type);
+			result = true;
+		}catch(Exception e){
+			logger.severe(e.getMessage());
+			throw new APIException("Error while processing data", e);
+		}
+		
+		return result;
+		
+
+	}
+
+	@Override
+	public String group(String collectionName, String keyFields, String reduce) throws APIException {
+		
+		throw new UnsupportedOperationException();
 	}
 
 }

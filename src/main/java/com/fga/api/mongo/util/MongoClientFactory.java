@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.mongodb.Mongo;
 import com.mongodb.ServerAddress;
 
-public  class MongoClientFactory {
+public final class MongoClientFactory {
 
 	private static final Logger logger = Logger.getLogger(MongoClientFactory.class.getName());
 	private static volatile MongoClientFactory instance;
@@ -17,7 +17,7 @@ public  class MongoClientFactory {
 	
 	static {
 		try {
-			seeds.add(new ServerAddress("localhost", 27017));
+			seeds.add(new ServerAddress("127.0.0.1", 27017));
 		} catch (UnknownHostException e) {
 			logger.severe("Server connection will fail");
 		}

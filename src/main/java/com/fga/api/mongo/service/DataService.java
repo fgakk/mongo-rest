@@ -32,5 +32,24 @@ public class DataService {
 		
 		return response;
 	}
+	
+	public String get(String query, String sort, int limit)  {
+		
+		String result;
+		if (sort != null){
+			result = mongoDAO.get(subContext, query, sort, limit);
+		}
+		else{
+			result = mongoDAO.get(subContext, query);
+		}
+		return  result;
+	
+	}
+	
+	public boolean executeMapReduce(String map, String reduce, String output, String query, String type) throws APIException{
+		
+		return mongoDAO.mapReduce(subContext, map, reduce, output, query, type);
+	}
+	
 	 
 }
