@@ -4,7 +4,10 @@
 	<groupId>com.fga.api</groupId>
 	<artifactId>mongo-rest</artifactId>
 	<version>1.0.0</version>
-	<packaging>war</packaging>
+	<modules>
+		<module>mongo-rest-basic</module>
+	</modules>
+	<packaging>pom</packaging>
 	<name>mongo-rest</name>
 	<description>A REST API for Mongo</description>
 	<properties>
