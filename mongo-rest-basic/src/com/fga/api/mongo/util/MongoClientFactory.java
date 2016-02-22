@@ -1,54 +1,25 @@
 package com.fga.api.mongo.util;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
-public final class MongoClientFactory {
+import java.util.ArrayList;
+import java.util.List;
 
-	private static final Logger logger = Logger.getLogger(MongoClientFactory.class.getName());
-	private static volatile MongoClientFactory instance;
-	private static List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-	
-	
-	static {
-		try {
-			seeds.add(new ServerAddress("127.0.0.1", 27017));
-		} catch (UnknownHostException e) {
-			logger.severe("Server connection will fail");
-		}
-	}
-	private Mongo mongoClient;
-	
-	private MongoClientFactory(){
-		mongoClient = new Mongo(seeds);
-	}
-	
-	public synchronized static MongoClientFactory getInstance(){
-		
-		if (instance == null){
-			instance = new MongoClientFactory();
-				
-		}
-		
-		return instance;
-	}
-	
-	public Mongo getMongoClient() {
-		
-		if (this.mongoClient == null){
-			synchronized (this) {
-				if (this.mongoClient == null){
-					this.mongoClient = new Mongo(seeds);
-				}
-			}
-		}
-		
-		return this.mongoClient;
-	}
-	
+public enum MongoClientFactory {
+
+    INSTANCE;
+
+    private MongoClient mongoClient;
+
+    MongoClientFactory(){
+        List<ServerAddress> seeds = new ArrayList<ServerAddress>();
+        seeds.add(new ServerAddress("127.0.0.1", 27017));
+        mongoClient = new MongoClient(seeds);
+    }
+
+    public MongoClient getMongoClient() {
+        return this.mongoClient;
+    }
+
 }
