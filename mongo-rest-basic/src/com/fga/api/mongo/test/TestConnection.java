@@ -15,7 +15,7 @@ public class TestConnection {
 	@Test
 	public void getConnection() {
 
-		MongoClientFactory factory = MongoClientFactory.getInstance();
+		MongoClientFactory factory = MongoClientFactory.INSTANCE;
 		Mongo client = factory.getMongoClient();
 		DB db = client.getDB("testDB");
 
