@@ -6,13 +6,13 @@ import com.mongodb.ServerAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum MongoClientFactory {
+public enum MongoClientWrapper {
 
     INSTANCE;
 
     private MongoClient mongoClient;
 
-    MongoClientFactory(){
+    MongoClientWrapper(){
         List<ServerAddress> seeds = new ArrayList<ServerAddress>();
         seeds.add(new ServerAddress("127.0.0.1", 27017));
         mongoClient = new MongoClient(seeds);

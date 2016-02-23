@@ -1,33 +1,39 @@
 package com.fga.api.mongo.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import com.fga.api.mongo.dao.MongoDAO;
 import com.fga.api.mongo.dao.MongoDAOImpl;
 import com.fga.api.mongo.exception.APIException;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.testng.annotations.Test;
+
 
 
 public class TestCRUD {
 
-	private static final String COLLECTION_NAME = "rawstats";
-	private static final String BATTERY_AVG = "battery_avg";
-	private MongoDAO dao = new MongoDAOImpl("smartstats");
+    private static final String COLLECTION_NAME = "testCollection";
+	private static final String COLLECTION_AGG = "testCollectionAgg";
+	private static final int LIMIT = 10;
+    public static final String KEY_1 = "key1";
+    public static final String KEY_2 = "key2";
+    public static final String KEY_3 = "key3";
+    public static final String VALUE_STRING = "value1";
+    public static final int VALUE_INT = 15;
+    public static final boolean VALUE_BOOLEAN = true;
+    private MongoDAO dao = new MongoDAOImpl("testDatabase");
 
-	@Test
+	@Test(priority = 1)
 	public void insertBasic() throws JSONException {
 
 		JSONObject obj = new JSONObject();
-		obj.put("key1", "value1");
-		obj.put("key2", true);
-		obj.put("key3", 15);
+		obj.put(KEY_1, VALUE_STRING);
+		obj.put(KEY_2, VALUE_BOOLEAN);
+		obj.put(KEY_3, VALUE_INT);
 
 		try {
 			assertTrue(dao.insert(COLLECTION_NAME, obj.toString()));
@@ -38,19 +44,23 @@ public class TestCRUD {
 
 	}
 
-	@Test
-	public void getAll() {
+	@Test(priority = 2)
+	public void getAll() throws JSONException {
 		try {
 
-			dao.get(COLLECTION_NAME, 0);
-
+			String results = dao.get(COLLECTION_NAME, LIMIT);
+            JSONArray arr = new JSONArray(results);
+            JSONObject obj = arr.getJSONObject(0);
+            assertEquals(obj.get(KEY_1), VALUE_STRING);
+            assertEquals(obj.get(KEY_2), VALUE_BOOLEAN);
+            assertEquals(obj.get(KEY_3), VALUE_INT);
 		} catch (APIException e) {
 			fail("Failed to get record");
 		}
 
 	}
 
-	@Test
+	@Test(priority = 3)
 	public void insertComplex() throws JSONException {
 
 		JSONObject obj = new JSONObject();
@@ -77,7 +87,7 @@ public class TestCRUD {
 		}
 	}
 
-	@Test
+	@Test(priority = 4)
 	public void get() throws JSONException {
 
 		JSONObject queryObj = new JSONObject();
@@ -85,11 +95,11 @@ public class TestCRUD {
 		queryValue.put("$gte", 1368997200000L);
 		queryValue.put("$lte", 1369083600000L);
 		queryObj.put("_id", queryValue);
-		System.out.println(dao.get(BATTERY_AVG, queryObj.toString()));
+		System.out.println(dao.get(COLLECTION_AGG, queryObj.toString()));
 
 	}
 
-	@Ignore
+
 	public void mapReduce() {
 
 		long start = 1368748800000L;
@@ -124,7 +134,7 @@ public class TestCRUD {
 		}
 	}
 
-	@Ignore
+
 	public void mapReduceSecondTest() {
 
 		String map = "function() { "

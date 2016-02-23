@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="MongoRestTestSuite">
+
+    <test name="connectionTest">
+        <classes>
+            <class name="com.fga.api.mongo.test.TestSuite" />
+            <class name="com.fga.api.mongo.test.TestConnection" />
+        </classes>
+    </test>
+
+    <test name="crudTest">
+        <classes>
+            <class name="com.fga.api.mongo.test.TestCRUD" />
+        </classes>
+    </test>
+
+</suite>

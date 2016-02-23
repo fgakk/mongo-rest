@@ -1,11 +1,5 @@
 package com.fga.api.mongo.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -13,9 +7,9 @@ import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 
-@RunWith(value = Suite.class)
-@SuiteClasses({ TestConnection.class, TestCRUD.class })
 public class TestSuite {
 
 	private static final MongodStarter starter = MongodStarter
@@ -24,7 +18,7 @@ public class TestSuite {
 	private static MongodExecutable _mongodExe;
 	private static MongodProcess _mongod;
 
-	@BeforeClass
+	@BeforeSuite
 	public static void setUp() throws Exception {
 
 		_mongodExe = starter.prepare(new MongodConfigBuilder()
@@ -34,7 +28,7 @@ public class TestSuite {
 
 	}
 
-	@AfterClass
+	@AfterSuite
 	public static void tearDown() throws Exception {
 
 		_mongod.stop();

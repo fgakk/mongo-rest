@@ -3,7 +3,7 @@ package com.fga.api.mongo.dao;
 import com.fga.api.mongo.exception.APIException;
 import com.fga.api.mongo.util.JSONUtil;
 import com.fga.api.mongo.util.MapReduceUtil;
-import com.fga.api.mongo.util.MongoClientFactory;
+import com.fga.api.mongo.util.MongoClientWrapper;
 import com.mongodb.*;
 import com.mongodb.util.JSON;
 import org.codehaus.jettison.json.JSONArray;
@@ -17,7 +17,7 @@ public class MongoDAOImpl implements MongoDAO {
 
 
     private static final Logger logger = Logger.getLogger(MongoDAOImpl.class.getName());
-    private MongoClientFactory factory = MongoClientFactory.INSTANCE;
+    private MongoClientWrapper factory = MongoClientWrapper.INSTANCE;
     private DB database;
 
     public MongoDAOImpl(String database) {
