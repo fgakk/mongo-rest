@@ -47,9 +47,11 @@ public class MongoDAOImpl implements MongoDAO {
 
 
     @Override
-    public boolean delete() {
-
-        throw new UnsupportedOperationException();
+    public boolean delete(String collectionName, String query) {
+        DBCollection collection = database.getCollection(collectionName);
+        DBObject queryObject = query != null ? (DBObject) JSONUtil.parse(query) : new BasicDBObject();
+        WriteResult result = collection.remove(queryObject, WriteConcern.ACKNOWLEDGED);
+        return result.wasAcknowledged();
     }
 
     @Override

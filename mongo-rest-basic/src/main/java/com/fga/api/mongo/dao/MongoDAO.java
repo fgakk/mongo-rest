@@ -10,7 +10,7 @@ public interface MongoDAO {
 
 	public boolean insert(String collectionName, List<String> data) throws APIException;
 	
-	public boolean delete();
+	public boolean delete(String collectionName, String query) throws APIException;
 	
 	public boolean update();
 	

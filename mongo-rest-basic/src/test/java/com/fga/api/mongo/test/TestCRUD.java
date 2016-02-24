@@ -30,6 +30,9 @@ public class TestCRUD {
     public static final boolean VALUE_BOOLEAN = true;
     public static final String COUNT = "count";
     public static final String BASE_MULTI_INSERT = "{" + COUNT + ": %d}";
+    private static final String KEY_4 = "key4" ;
+    private static final String KEY_5 = "key5";
+    public static final String EMPTY_ARRAY = "[]";
     private MongoDAO dao = new MongoDAOImpl("testDatabase");
 
 	@Test(priority = 1)
@@ -69,20 +72,20 @@ public class TestCRUD {
 	public void insertComplex() throws JSONException {
 
 		JSONObject obj = new JSONObject();
-		obj.put("key1", "value1");
-		obj.put("key2", true);
-		obj.put("key3", 15);
+        obj.put(KEY_1, VALUE_STRING);
+        obj.put(KEY_2, VALUE_BOOLEAN);
+        obj.put(KEY_3, VALUE_INT);
 
 		JSONArray arr = new JSONArray();
 		JSONObject innerObj = new JSONObject();
-		innerObj.put("key1", "test1");
+		innerObj.put(KEY_1, "test1");
 
 		arr.put(innerObj);
 
-		obj.put("key4", arr);
+		obj.put(KEY_4, arr);
 		JSONObject obj2 = new JSONObject();
-		obj2.put("key1", "value1");
-		obj.put("key5", obj2);
+		obj2.put(KEY_1, "value1");
+		obj.put(KEY_5, obj2);
 
 		try {
 			assertTrue(dao.insert(COLLECTION_NAME, obj.toString()));
@@ -109,6 +112,16 @@ public class TestCRUD {
 		JSONArray arr = new JSONArray(results);
 		Assert.assertTrue(arr.length() == 3);
 	}
+
+    @Test(priority = 5)
+    public void deleteQuery() throws JSONException, APIException {
+
+        JSONObject queryObj = new JSONObject();
+        queryObj.put(COUNT, 2000);
+        Assert.assertTrue(dao.delete(COLLECTION_AGG, queryObj.toString()));
+        String result = dao.get(COLLECTION_AGG, queryObj.toString());
+        Assert.assertEquals(result, EMPTY_ARRAY);
+    }
 
 
 	public void mapReduce() {
