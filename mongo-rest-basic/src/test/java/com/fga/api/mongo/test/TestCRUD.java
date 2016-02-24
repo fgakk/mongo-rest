@@ -10,8 +10,11 @@ import com.fga.api.mongo.exception.APIException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class TestCRUD {
@@ -25,6 +28,8 @@ public class TestCRUD {
     public static final String VALUE_STRING = "value1";
     public static final int VALUE_INT = 15;
     public static final boolean VALUE_BOOLEAN = true;
+    public static final String COUNT = "count";
+    public static final String BASE_MULTI_INSERT = "{" + COUNT + ": %d}";
     private MongoDAO dao = new MongoDAOImpl("testDatabase");
 
 	@Test(priority = 1)
@@ -88,15 +93,21 @@ public class TestCRUD {
 	}
 
 	@Test(priority = 4)
-	public void get() throws JSONException {
+	public void get() throws JSONException, APIException {
 
+		List<String> dataList = new ArrayList<>();
+		dataList.add(String.format(BASE_MULTI_INSERT, 1000));
+		dataList.add(String.format(BASE_MULTI_INSERT, 2000));
+		dataList.add(String.format(BASE_MULTI_INSERT, 3000));
+        assertTrue(dao.insert(COLLECTION_AGG, dataList));
 		JSONObject queryObj = new JSONObject();
 		JSONObject queryValue = new JSONObject();
-		queryValue.put("$gte", 1368997200000L);
-		queryValue.put("$lte", 1369083600000L);
-		queryObj.put("_id", queryValue);
-		System.out.println(dao.get(COLLECTION_AGG, queryObj.toString()));
-
+		queryValue.put("$gte", 1000);
+		queryValue.put("$lte", 3000);
+		queryObj.put(COUNT, queryValue);
+		String results = dao.get(COLLECTION_AGG, queryObj.toString());
+		JSONArray arr = new JSONArray(results);
+		Assert.assertTrue(arr.length() == 3);
 	}
 
 

@@ -2,9 +2,13 @@ package com.fga.api.mongo.dao;
 
 import com.fga.api.mongo.exception.APIException;
 
+import java.util.List;
+
 public interface MongoDAO {
 
 	public boolean insert(String collectionName, String data) throws APIException;
+
+	public boolean insert(String collectionName, List<String> data) throws APIException;
 	
 	public boolean delete();
 	

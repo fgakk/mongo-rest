@@ -10,6 +10,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -29,6 +31,17 @@ public class MongoDAOImpl implements MongoDAO {
     public boolean insert(String collectionName, String data) throws APIException {
         DBCollection collection = database.getCollection(collectionName);
         WriteResult result = collection.insert((DBObject) JSON.parse(data), WriteConcern.ACKNOWLEDGED);
+        return result.wasAcknowledged();
+    }
+
+    @Override
+    public boolean insert(String collectionName, List<String> dataList) throws APIException {
+        DBCollection collection = database.getCollection(collectionName);
+        List<DBObject> dbObjects = new ArrayList<>();
+        dataList.forEach(data -> {
+            dbObjects.add((DBObject) JSON.parse(data));
+        });
+        WriteResult result = collection.insert(dbObjects, WriteConcern.ACKNOWLEDGED);
         return result.wasAcknowledged();
     }
 
